@@ -1190,13 +1190,17 @@
 
         // トークン検証（JSONP経由でGAS APIを呼び出し）
         try {
+          console.log('Starting token validation...');
           const validateResult = await validateTokenViaJsonp(TOKEN);
+          console.log('Validation result:', validateResult);
 
           if (!validateResult.valid) {
             // トークンが無効な場合はエラー画面を表示
+            console.log('Token invalid, showing error:', validateResult.error);
             showError(validateResult.error || 'DEFAULT');
             return;
           }
+          console.log('Token valid, showing form');
         } catch (validateError) {
           console.warn('Token validation failed, continuing with form:', validateError);
           // 検証に失敗しても、フォームは表示する（送信時に再検証される）
