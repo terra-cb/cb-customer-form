@@ -1188,22 +1188,19 @@
           return;
         }
 
-        // トークン検証（JSONP経由でGAS APIを呼び出し）
+        // トークン状態確認（Worker KV経由）
         try {
-          console.log('Starting token validation...');
-          const validateResult = await validateTokenViaJsonp(TOKEN);
-          console.log('Validation result:', validateResult);
+          const checkResponse = await fetch(`${WORKER_URL}/check-token?token=${encodeURIComponent(TOKEN)}`);
+          const checkResult = await checkResponse.json();
 
-          if (!validateResult.valid) {
-            // トークンが無効な場合はエラー画面を表示
-            console.log('Token invalid, showing error:', validateResult.error);
-            showError(validateResult.error || 'DEFAULT');
+          if (!checkResult.valid) {
+            // トークンが使用済みの場合はエラー画面を表示
+            showError(checkResult.error || 'TOKEN_ALREADY_USED');
             return;
           }
-          console.log('Token valid, showing form');
-        } catch (validateError) {
-          console.warn('Token validation failed, continuing with form:', validateError);
-          // 検証に失敗しても、フォームは表示する（送信時に再検証される）
+        } catch (checkError) {
+          console.warn('Token check failed, continuing with form:', checkError);
+          // 確認に失敗しても、フォームは表示する（送信時に再検証される）
         }
 
         // 受付データを表示
