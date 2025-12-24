@@ -685,8 +685,8 @@
   <div class="container">
     <!-- ヘッダー -->
     <div class="header">
-      <h1>キャッシュバック口座情報入力</h1>
-      <p>振込先の口座情報をご入力ください</p>
+      <h1>キャッシュバック口座情報入力<br><small style="font-size: 14px; font-weight: 400;">Cashback Bank Account Registration</small></h1>
+      <p>振込先の口座情報をご入力ください<br><small style="opacity: 0.8;">Please enter your bank account information</small></p>
     </div>
 
     <!-- メインコンテンツ -->
@@ -694,7 +694,7 @@
       <!-- 初期ローディング -->
       <div class="loading show" id="initialLoading">
         <div class="spinner"></div>
-        <p style="color: #666;">読み込み中...</p>
+        <p style="color: #666;">読み込み中... / Loading...</p>
       </div>
 
       <!-- エラー画面 -->
@@ -702,7 +702,7 @@
         <div class="error-icon">
           <span class="material-icons">error_outline</span>
         </div>
-        <h2 class="error-title" id="errorTitle">エラー</h2>
+        <h2 class="error-title" id="errorTitle">エラー / Error</h2>
         <p class="error-message" id="errorMessage">問題が発生しました。</p>
       </div>
 
@@ -712,15 +712,15 @@
         <div class="steps">
           <div class="step active" id="step1">
             <div class="step-circle">1</div>
-            <div class="step-label">情報入力</div>
+            <div class="step-label">情報入力<br><small style="font-size: 10px;">Input</small></div>
           </div>
           <div class="step" id="step2">
             <div class="step-circle">2</div>
-            <div class="step-label">確認</div>
+            <div class="step-label">確認<br><small style="font-size: 10px;">Confirm</small></div>
           </div>
           <div class="step" id="step3">
             <div class="step-circle">3</div>
-            <div class="step-label">完了</div>
+            <div class="step-label">完了<br><small style="font-size: 10px;">Done</small></div>
           </div>
         </div>
 
@@ -730,19 +730,19 @@
           <div class="section">
             <div class="section-title">
               <span class="material-icons">info</span>
-              ご確認ください
+              ご確認ください / Please Confirm
             </div>
             <div class="info-card">
               <div class="info-row">
-                <span class="info-label">お名前</span>
+                <span class="info-label">お名前 / Name</span>
                 <span class="info-value" id="displayName">-</span>
               </div>
               <div class="info-row">
-                <span class="info-label">電話番号</span>
+                <span class="info-label">電話番号 / Phone</span>
                 <span class="info-value" id="displayPhone">-</span>
               </div>
               <div class="info-row">
-                <span class="info-label">キャッシュバック金額</span>
+                <span class="info-label">キャッシュバック金額 / Amount</span>
                 <span class="info-value" id="displayAmount">-</span>
               </div>
             </div>
@@ -752,7 +752,7 @@
           <div class="section">
             <div class="form-field">
               <label class="form-label">
-                メールアドレス
+                メールアドレス / Email Address
                 <span class="required">*</span>
               </label>
               <input
@@ -762,8 +762,8 @@
                 placeholder="example@email.com"
                 autocomplete="email"
               >
-              <div class="help-text">振込完了通知やエラー発生時の連絡に使用します</div>
-              <div class="error-text" id="emailError">正しいメールアドレスを入力してください</div>
+              <div class="help-text">振込完了通知やエラー発生時の連絡に使用します<br><small style="color: #888;">Used for transfer completion notifications and error alerts</small></div>
+              <div class="error-text" id="emailError">正しいメールアドレスを入力してください / Please enter a valid email address</div>
             </div>
           </div>
 
@@ -771,13 +771,13 @@
           <div class="section">
             <div class="section-title">
               <span class="material-icons">account_balance</span>
-              振込先口座情報
+              振込先口座情報 / Bank Account Information
             </div>
 
             <!-- 銀行名 -->
             <div class="form-field">
               <label class="form-label">
-                銀行名（カナ入力）
+                銀行名 / Bank Name（カナ入力）
                 <span class="required">*</span>
               </label>
               <div class="search-select">
@@ -792,14 +792,14 @@
                 <span class="material-icons search-icon">search</span>
                 <div class="search-results" id="bankResults"></div>
               </div>
-              <div class="help-text">カナで入力すると候補が表示されます（自動的にカナに変換されます）</div>
-              <div class="error-text" id="bankError">銀行を選択してください</div>
+              <div class="help-text">カナで入力すると候補が表示されます<br><small style="color: #888;">Type in Katakana to see suggestions</small></div>
+              <div class="error-text" id="bankError">銀行を選択してください / Please select a bank</div>
             </div>
 
             <!-- 支店名 -->
             <div class="form-field">
               <label class="form-label">
-                支店名（カナ入力）
+                支店名 / Branch Name（カナ入力）
                 <span class="required">*</span>
               </label>
               <div class="search-select">
@@ -815,24 +815,24 @@
                 <span class="material-icons search-icon">search</span>
                 <div class="search-results" id="branchResults"></div>
               </div>
-              <div class="help-text" id="branchHelp">まず銀行を選択してください</div>
-              <div class="error-text" id="branchError">支店を選択してください</div>
+              <div class="help-text" id="branchHelp">まず銀行を選択してください / Please select a bank first</div>
+              <div class="error-text" id="branchError">支店を選択してください / Please select a branch</div>
             </div>
 
             <!-- 預金種目 -->
             <div class="form-field">
               <label class="form-label">
-                預金種目
+                預金種目 / Account Type
                 <span class="required">*</span>
               </label>
               <div class="radio-group">
                 <div class="radio-option">
                   <input type="radio" name="accountType" id="typeOrdinary" value="ordinary" checked>
-                  <label for="typeOrdinary" class="radio-label">普通預金</label>
+                  <label for="typeOrdinary" class="radio-label">普通預金<br><small style="font-size: 11px;">Savings</small></label>
                 </div>
                 <div class="radio-option">
                   <input type="radio" name="accountType" id="typeCurrent" value="current">
-                  <label for="typeCurrent" class="radio-label">当座預金</label>
+                  <label for="typeCurrent" class="radio-label">当座預金<br><small style="font-size: 11px;">Checking</small></label>
                 </div>
               </div>
             </div>
@@ -840,7 +840,7 @@
             <!-- 口座番号 -->
             <div class="form-field">
               <label class="form-label">
-                口座番号
+                口座番号 / Account Number
                 <span class="required">*</span>
               </label>
               <input
@@ -852,14 +852,14 @@
                 inputmode="numeric"
                 autocomplete="off"
               >
-              <div class="help-text">7桁の数字を入力してください（自動的にゼロ埋めされます）</div>
-              <div class="error-text" id="accountNumberError">7桁の数字を入力してください</div>
+              <div class="help-text">7桁の数字を入力してください<br><small style="color: #888;">Enter 7 digits (auto-padded with zeros)</small></div>
+              <div class="error-text" id="accountNumberError">7桁の数字を入力してください / Please enter 7 digits</div>
             </div>
 
             <!-- 口座名義 -->
             <div class="form-field">
               <label class="form-label">
-                口座名義（カナ）
+                口座名義 / Account Holder Name（カナ）
                 <span class="required">*</span>
               </label>
               <input
@@ -870,8 +870,8 @@
                 autocomplete="off"
                 inputmode="katakana"
               >
-              <div class="help-text">全角カタカナで入力してください。姓と名の間にスペースを入れてください（例：ヤマダ タロウ）<br>※半角スペースも自動的に全角スペースに変換されます</div>
-              <div class="error-text" id="accountNameError">全角カタカナで入力してください</div>
+              <div class="help-text">全角カタカナで入力してください。姓と名の間にスペースを入れてください（例：ヤマダ タロウ）<br><small style="color: #888;">Enter in Katakana with a space between family and given name</small></div>
+              <div class="error-text" id="accountNameError">全角カタカナで入力してください / Please enter in Katakana</div>
             </div>
           </div>
 
@@ -879,14 +879,15 @@
           <div class="checkbox-field">
             <input type="checkbox" id="consent">
             <label for="consent" class="checkbox-label">
-              <a href="#" target="_blank">個人情報の取扱いに関する同意事項</a>を確認し、同意します
+              <a href="#" target="_blank">個人情報の取扱いに関する同意事項</a>を確認し、同意します<br>
+              <small style="color: #666;">I have read and agree to the privacy policy</small>
             </label>
           </div>
 
           <!-- 確認ボタン -->
           <button class="button button-primary" id="confirmButton" disabled>
             <span class="material-icons">check_circle</span>
-            確認画面へ
+            確認画面へ / Confirm
           </button>
         </div>
 
@@ -895,10 +896,11 @@
           <div class="section">
             <div class="section-title">
               <span class="material-icons">fact_check</span>
-              入力内容の確認
+              入力内容の確認 / Confirmation
             </div>
             <p style="color: #666; font-size: 14px; margin-bottom: 24px;">
-              以下の内容でよろしければ「送信する」ボタンを押してください
+              以下の内容でよろしければ「送信する」ボタンを押してください<br>
+              <small style="color: #888;">Please review and click "Submit" if correct</small>
             </p>
 
             <!-- 警告バナー（スペースなし口座名義） -->
@@ -906,17 +908,18 @@
               <div class="warning-banner">
                 <span class="material-icons">warning</span>
                 <div class="warning-content">
-                  <div class="warning-title">確認してください</div>
+                  <div class="warning-title">確認してください / Please Check</div>
                   <div class="warning-text">
                     口座名義にスペースが含まれていません。<br>
-                    正式な口座名義は、姓と名の間にスペースを入れる必要があります。
+                    正式な口座名義は、姓と名の間にスペースを入れる必要があります。<br>
+                    <small style="color: #888;">Account name has no space. Usually a space is required between family and given name.</small>
                   </div>
                   <div class="warning-example">
                     例：ヤマダ タロウ、タナカ ハナコ、サトウ ケンイチ
                   </div>
                   <div style="font-size: 12px; color: #999; margin-top: 8px;">
                     修正する場合は「戻る」ボタンを押してください。<br>
-                    スペースが不要な場合は、そのまま送信できます。
+                    <small>Click "Back" to edit, or submit as is if no space is needed.</small>
                   </div>
                 </div>
               </div>
@@ -924,39 +927,39 @@
 
             <div class="info-card">
               <div class="confirm-item">
-                <div class="confirm-label">お名前</div>
+                <div class="confirm-label">お名前 / Name</div>
                 <div class="confirm-value" id="confirmName"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">電話番号</div>
+                <div class="confirm-label">電話番号 / Phone</div>
                 <div class="confirm-value" id="confirmPhone"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">メールアドレス</div>
+                <div class="confirm-label">メールアドレス / Email</div>
                 <div class="confirm-value" id="confirmEmail"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">キャッシュバック金額</div>
+                <div class="confirm-label">キャッシュバック金額 / Amount</div>
                 <div class="confirm-value" id="confirmAmount"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">銀行名</div>
+                <div class="confirm-label">銀行名 / Bank</div>
                 <div class="confirm-value" id="confirmBank"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">支店名</div>
+                <div class="confirm-label">支店名 / Branch</div>
                 <div class="confirm-value" id="confirmBranch"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">預金種目</div>
+                <div class="confirm-label">預金種目 / Account Type</div>
                 <div class="confirm-value" id="confirmAccountType"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">口座番号</div>
+                <div class="confirm-label">口座番号 / Account No.</div>
                 <div class="confirm-value" id="confirmAccountNumber"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">口座名義</div>
+                <div class="confirm-label">口座名義 / Account Holder</div>
                 <div class="confirm-value" id="confirmAccountName"></div>
               </div>
             </div>
@@ -964,11 +967,11 @@
             <div class="button-group">
               <button class="button button-secondary" id="backButton">
                 <span class="material-icons">arrow_back</span>
-                戻る
+                戻る / Back
               </button>
               <button class="button button-primary" id="submitButton">
                 <span class="material-icons">send</span>
-                送信する
+                送信する / Submit
               </button>
             </div>
           </div>
@@ -977,7 +980,7 @@
         <!-- 送信中 -->
         <div class="loading" id="loadingSection">
           <div class="spinner"></div>
-          <p style="color: #666;">送信中...</p>
+          <p style="color: #666;">送信中... / Submitting...</p>
         </div>
 
         <!-- 完了画面 -->
@@ -985,13 +988,13 @@
           <div class="success-icon">
             <span class="material-icons">check</span>
           </div>
-          <h2 class="completion-title">送信完了</h2>
+          <h2 class="completion-title">送信完了 / Submitted</h2>
           <p class="completion-message">
             口座情報の登録が完了しました。<br>
             振込完了後、ご登録いただいたメールアドレスに通知をお送りします。<br>
             <br>
-            振込までにお時間をいただく場合がございます。<br>
-            ご不明な点がございましたら、店舗までお問い合わせください。
+            <small style="color: #888;">Your bank account information has been registered.<br>
+            You will receive an email notification when the transfer is complete.</small>
           </p>
         </div>
       </div>
@@ -1001,7 +1004,7 @@
   <!-- 自動保存インジケーター -->
   <div class="autosave-indicator" id="autosaveIndicator">
     <span class="material-icons" style="font-size: 16px;">cloud_done</span>
-    <span>自動保存しました</span>
+    <span>自動保存しました / Auto-saved</span>
   </div>
 
   <script>
@@ -1060,28 +1063,28 @@
     // エラーメッセージ定義
     const ERROR_MESSAGES = {
       'INVALID_TOKEN_FORMAT': {
-        title: '無効なURL',
-        message: 'このURLは正しくありません。<br>QRコードを再度スキャンしてください。'
+        title: '無効なURL / Invalid URL',
+        message: 'このURLは正しくありません。<br>QRコードを再度スキャンしてください。<br><small style="color: #888;">This URL is invalid. Please scan the QR code again.</small>'
       },
       'TOKEN_NOT_FOUND': {
-        title: '受付情報が見つかりません',
-        message: 'この受付は見つかりません。<br>店舗スタッフにお問い合わせください。'
+        title: '受付情報が見つかりません / Not Found',
+        message: 'この受付は見つかりません。<br>店舗スタッフにお問い合わせください。<br><small style="color: #888;">This registration was not found. Please contact staff.</small>'
       },
       'TOKEN_INVALIDATED': {
-        title: 'このQRコードは無効です',
-        message: 'このQRコードは再発行されたため無効になりました。<br>新しいQRコードをご利用ください。'
+        title: 'このQRコードは無効です / Invalid QR Code',
+        message: 'このQRコードは再発行されたため無効になりました。<br>新しいQRコードをご利用ください。<br><small style="color: #888;">This QR code has been reissued. Please use the new one.</small>'
       },
       'TOKEN_ALREADY_USED': {
-        title: '登録済み',
-        message: '口座情報は既に登録されています。<br>ご不明な点は店舗スタッフにお問い合わせください。'
+        title: '登録済み / Already Registered',
+        message: '口座情報は既に登録されています。<br>ご不明な点は店舗スタッフにお問い合わせください。<br><small style="color: #888;">Bank account is already registered. Please contact staff if you have questions.</small>'
       },
       'TOKEN_EXPIRED': {
-        title: '有効期限切れ',
-        message: 'このQRコードの有効期限が切れています。<br>店舗にてQRコードを再発行してもらってください。'
+        title: '有効期限切れ / Expired',
+        message: 'このQRコードの有効期限が切れています。<br>店舗にてQRコードを再発行してもらってください。<br><small style="color: #888;">This QR code has expired. Please ask staff to reissue it.</small>'
       },
       'DEFAULT': {
-        title: 'エラー',
-        message: '問題が発生しました。<br>しばらく経ってから再度お試しください。'
+        title: 'エラー / Error',
+        message: '問題が発生しました。<br>しばらく経ってから再度お試しください。<br><small style="color: #888;">An error occurred. Please try again later.</small>'
       }
     };
 
@@ -1441,7 +1444,7 @@
       });
 
       if (filtered.length === 0) {
-        results.innerHTML = '<div class="no-results">該当する銀行が見つかりません<br><small>カナで入力してください（例：ミズホ）</small></div>';
+        results.innerHTML = '<div class="no-results">該当する銀行が見つかりません<br><small>カナで入力してください（例：ミズホ）</small><br><small style="color: #888;">No results. Type in Katakana.</small></div>';
         results.classList.add('show');
         return;
       }
@@ -1479,7 +1482,7 @@
       branchSearch.disabled = false;
       branchSearch.placeholder = '支店名を入力して検索';
       branchSearch.value = '';
-      document.getElementById('branchHelp').textContent = 'カナで入力すると候補が表示されます';
+      document.getElementById('branchHelp').innerHTML = 'カナで入力すると候補が表示されます<br><small style="color: #888;">Type in Katakana to see suggestions</small>';
       selectedBranch = null;
 
       // 支店データをプリロード
@@ -1516,7 +1519,7 @@
       });
 
       if (filtered.length === 0) {
-        results.innerHTML = '<div class="no-results">該当する支店が見つかりません<br><small>カナで入力してください（例：トウキヨウ）</small></div>';
+        results.innerHTML = '<div class="no-results">該当する支店が見つかりません<br><small>カナで入力してください（例：トウキヨウ）</small><br><small style="color: #888;">No results. Type in Katakana.</small></div>';
         results.classList.add('show');
         return;
       }
@@ -1755,10 +1758,10 @@
       }).then(response => response.json())
         .then(data => {
           if (data.success) {
-            showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。');
+            showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
           } else {
             console.error('Submit failed:', data.error);
-            showSubmitResult(false, 'エラーが発生しました。<br>しばらく経ってから再度お試しください。');
+            showSubmitResult(false, 'エラーが発生しました。<br>しばらく経ってから再度お試しください。<br><small style="color: #888;">An error occurred. Please try again later.</small>');
           }
         })
         .catch(error => {
@@ -1780,7 +1783,7 @@
         mode: 'no-cors',
         body: submitData
       }).then(() => {
-        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。');
+        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
       }).catch(error => {
         console.error('Direct GAS submit error:', error);
         submitViaIframe(fields);
@@ -1811,13 +1814,13 @@
       document.body.appendChild(form);
 
       const timeout = setTimeout(() => {
-        showSubmitResult(true, '送信処理中です。しばらくお待ちください。');
+        showSubmitResult(true, '送信処理中です。しばらくお待ちください。<br><small style="color: #888;">Processing. Please wait...</small>');
         cleanup();
       }, 10000);
 
       iframe.onload = function() {
         clearTimeout(timeout);
-        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。');
+        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
         cleanup();
       };
 
@@ -1839,7 +1842,7 @@
           <div style="width: 80px; height: 80px; border-radius: 50%; background: ${success ? '#27ae60' : '#e74c3c'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white;">
             ${success ? '✓' : '✕'}
           </div>
-          <h1 style="color: #333; margin-bottom: 16px; font-size: 24px;">${success ? '送信完了' : 'エラー'}</h1>
+          <h1 style="color: #333; margin-bottom: 16px; font-size: 24px;">${success ? '送信完了 / Submitted' : 'エラー / Error'}</h1>
           <p style="color: #666; line-height: 1.6;">${message}</p>
         </div>
       `;
