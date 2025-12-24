@@ -1018,6 +1018,42 @@
     let selectedBranch = null;
     let formData = {};
 
+    // JSONP リクエスト関数（CORS回避用）
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const script = document.createElement('script');
+
+        // タイムアウト設定
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('JSONP request timeout'));
+        }, 30000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        }
+
+        window[callbackName] = function(data) {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('JSONP request failed'));
+        };
+
+        const separator = url.includes('?') ? '&' : '?';
+        script.src = url + separator + 'callback=' + callbackName;
+        document.head.appendChild(script);
+      });
+    }
+
     // エラーメッセージ定義
     const ERROR_MESSAGES = {
       'INVALID_TOKEN_FORMAT': {
@@ -1054,9 +1090,8 @@
       }
 
       try {
-        // 受付データを取得
-        const response = await fetch(BASE_URL + '?path=api/form/' + TOKEN);
-        const result = await response.json();
+        // 受付データを取得（JSONP）
+        const result = await jsonp(BASE_URL + '?path=api/form/' + TOKEN);
 
         if (!result.success) {
           showError(result.error || 'DEFAULT');
@@ -1106,11 +1141,10 @@
       document.getElementById('errorSection').classList.add('show');
     }
 
-    // 銀行データを取得
+    // 銀行データを取得（JSONP）
     async function loadBanks() {
       try {
-        const response = await fetch(BASE_URL + '?path=api/banks');
-        const result = await response.json();
+        const result = await jsonp(BASE_URL + '?path=api/banks');
         if (result.success) {
           banksCache = result.data.banks || [];
         }
@@ -1119,15 +1153,14 @@
       }
     }
 
-    // 支店データを取得
+    // 支店データを取得（JSONP）
     async function loadBranches(bankCode) {
       if (branchesCache[bankCode]) {
         return branchesCache[bankCode];
       }
 
       try {
-        const response = await fetch(BASE_URL + '?path=api/banks/' + bankCode + '/branches');
-        const result = await response.json();
+        const result = await jsonp(BASE_URL + '?path=api/banks/' + bankCode + '/branches');
         if (result.success) {
           branchesCache[bankCode] = result.data.branches || [];
           return branchesCache[bankCode];
