@@ -1432,9 +1432,10 @@
       const filtered = banksCache.filter(bank => {
         const normalizedBankKana = normalizeForSearch(bank.kana || '');
         const normalizedBankKanaSmall = normalizeKana(normalizedBankKana);
-        return bank.name.includes(keyword) ||
-          normalizedBankKana.includes(normalizedKeyword) ||
-          normalizedBankKanaSmall.includes(normalizedKeywordSmall);
+        // 前方一致検索
+        return bank.name.startsWith(keyword) ||
+          normalizedBankKana.startsWith(normalizedKeyword) ||
+          normalizedBankKanaSmall.startsWith(normalizedKeywordSmall);
       });
 
       if (filtered.length === 0) {
@@ -1503,11 +1504,14 @@
       const branches = await loadBranches(selectedBank.code);
       const normalizedKeyword = normalizeKana(keyword);
 
-      const filtered = branches.filter(branch =>
-        branch.name.includes(keyword) ||
-        branch.kana.includes(keyword) ||
-        normalizeKana(branch.kana).includes(normalizedKeyword)
-      );
+      // 前方一致検索
+      const normalizedKeywordFull = normalizeForSearch(keyword);
+      const filtered = branches.filter(branch => {
+        const normalizedBranchKana = normalizeForSearch(branch.kana || '');
+        return branch.name.startsWith(keyword) ||
+          normalizedBranchKana.startsWith(normalizedKeywordFull) ||
+          normalizeKana(normalizedBranchKana).startsWith(normalizedKeyword);
+      });
 
       if (filtered.length === 0) {
         results.innerHTML = '<div class="no-results">該当する支店が見つかりません<br><small>カナで入力してください（例：トウキヨウ）</small></div>';
@@ -1724,11 +1728,6 @@
       // localStorageクリア
       localStorage.removeItem('customerFormData_' + TOKEN);
 
-      // 隠しフォームを作成してPOST
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = GAS_URL + '?path=external-form';
-
       const fields = {
         token: TOKEN,
         email: formData.email,
@@ -1742,6 +1741,40 @@
         external: 'true'
       };
 
+      // fetchで送信を試みる（no-corsモード）
+      const submitData = new FormData();
+      for (const [key, value] of Object.entries(fields)) {
+        submitData.append(key, value);
+      }
+
+      fetch(GAS_URL + '?path=external-form', {
+        method: 'POST',
+        mode: 'no-cors',  // CORSエラーを回避（レスポンスは取得できない）
+        body: submitData
+      }).then(() => {
+        // no-corsモードではレスポンス内容を確認できないが、
+        // エラーが発生しなければ送信成功とみなす
+        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。');
+      }).catch(error => {
+        console.error('Submit error:', error);
+        // フォールバック：隠しiframeで送信を試みる
+        submitViaIframe(fields);
+      });
+    }
+
+    // iframeによるフォールバック送信
+    function submitViaIframe(fields) {
+      const iframeName = 'submitFrame_' + Date.now();
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = GAS_URL + '?path=external-form';
+      form.target = iframeName;
+
       for (const [key, value] of Object.entries(fields)) {
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -1751,7 +1784,43 @@
       }
 
       document.body.appendChild(form);
+
+      const timeout = setTimeout(() => {
+        showSubmitResult(true, '送信処理中です。しばらくお待ちください。');
+        cleanup();
+      }, 10000);
+
+      iframe.onload = function() {
+        clearTimeout(timeout);
+        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。');
+        cleanup();
+      };
+
+      function cleanup() {
+        setTimeout(() => {
+          if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+          if (form.parentNode) form.parentNode.removeChild(form);
+        }, 1000);
+      }
+
       form.submit();
+    }
+
+    function showSubmitResult(success, message) {
+      document.getElementById('loadingSection').classList.remove('show');
+
+      const resultHtml = `
+        <div class="container" style="text-align: center; padding: 48px 24px;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: ${success ? '#27ae60' : '#e74c3c'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white;">
+            ${success ? '✓' : '✕'}
+          </div>
+          <h1 style="color: #333; margin-bottom: 16px; font-size: 24px;">${success ? '送信完了' : 'エラー'}</h1>
+          <p style="color: #666; line-height: 1.6;">${message}</p>
+        </div>
+      `;
+
+      document.querySelector('.main').innerHTML = resultHtml;
+      document.querySelector('.steps').style.display = 'none';
     }
 
     // 電話番号フォーマット
