@@ -898,6 +898,23 @@
               <div class="help-text">全角カタカナで入力してください。姓と名の間にスペースを入れてください（例：ヤマダ タロウ）<br><small style="color: #888;">Enter in Katakana with a space between family and given name</small></div>
               <div class="error-text" id="accountNameError">全角カタカナで入力してください / Please enter in Katakana</div>
             </div>
+
+            <!-- 契約者との続柄 -->
+            <div class="form-field">
+              <label class="form-label">
+                契約者との続柄 / Relationship to Contractor
+                <span class="required">*</span>
+              </label>
+              <select class="form-input" id="relationship">
+                <option value="">選択してください / Please select</option>
+                <option value="本人">本人 / Self</option>
+                <option value="配偶者">配偶者 / Spouse</option>
+                <option value="親">親 / Parent</option>
+                <option value="子">子 / Child</option>
+              </select>
+              <div class="help-text">口座名義は原則ご契約者本人のものをご登録ください。ご本人名義の口座がない場合、一親等以内のご親族の口座もご利用いただけます。<br><small style="color: #888;">Please register the contractor's own account. Accounts of first-degree relatives are also accepted.</small></div>
+              <div class="error-text" id="relationshipError">続柄を選択してください / Please select a relationship</div>
+            </div>
           </div>
 
           <!-- 個人情報取扱同意 -->
@@ -906,15 +923,6 @@
             <label for="consent" class="checkbox-label">
               <a href="#" target="_blank">個人情報の取扱いに関する同意事項</a>を確認し、同意します<br>
               <small style="color: #666;">I have read and agree to the privacy policy</small>
-            </label>
-          </div>
-
-          <!-- 口座名義確認 -->
-          <div class="checkbox-field">
-            <input type="checkbox" id="accountNameConfirm">
-            <label for="accountNameConfirm" class="checkbox-label">
-              口座名義が店頭契約者本人または一親等以内の親族であることを確認しました<br>
-              <small style="color: #666;">I confirm the account holder is the customer or a first-degree relative</small>
             </label>
           </div>
 
@@ -997,11 +1005,8 @@
                 <div class="confirm-value" id="confirmAccountName"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">口座名義確認 / Account Holder Confirmation</div>
-                <div class="confirm-value" style="color: #4caf50;">
-                  <span class="material-icons" style="font-size: 16px; vertical-align: middle;">check_circle</span>
-                  店頭契約者本人または一親等以内の親族であることを確認済み
-                </div>
+                <div class="confirm-label">契約者との続柄 / Relationship</div>
+                <div class="confirm-value" id="confirmRelationship"></div>
               </div>
             </div>
 
@@ -1398,7 +1403,10 @@
       });
 
       document.getElementById('consent').addEventListener('change', validateForm);
-      document.getElementById('accountNameConfirm').addEventListener('change', validateForm);
+      document.getElementById('relationship').addEventListener('change', function() {
+        validateForm();
+        autoSave();
+      });
 
       // ボタン
       document.getElementById('confirmButton').addEventListener('click', showConfirmation);
@@ -1633,8 +1641,8 @@
       const email = document.getElementById('email').value;
       const accountNumber = document.getElementById('accountNumber').value;
       const accountName = document.getElementById('accountName').value;
+      const relationship = document.getElementById('relationship').value;
       const consent = document.getElementById('consent').checked;
-      const accountNameConfirm = document.getElementById('accountNameConfirm').checked;
 
       let isValid = true;
 
@@ -1654,11 +1662,11 @@
         isValid = false;
       }
 
-      if (!consent) {
+      if (!relationship) {
         isValid = false;
       }
 
-      if (!accountNameConfirm) {
+      if (!consent) {
         isValid = false;
       }
 
@@ -1694,6 +1702,7 @@
           accountType: document.querySelector('input[name="accountType"]:checked')?.value,
           accountNumber: document.getElementById('accountNumber').value,
           accountName: document.getElementById('accountName').value,
+          relationship: document.getElementById('relationship').value,
         };
 
         localStorage.setItem('customerFormData_' + TOKEN, JSON.stringify(data));
@@ -1728,6 +1737,7 @@
         }
         if (data.accountNumber) document.getElementById('accountNumber').value = data.accountNumber;
         if (data.accountName) document.getElementById('accountName').value = data.accountName;
+        if (data.relationship) document.getElementById('relationship').value = data.relationship;
 
         validateForm();
       } catch (e) {
@@ -1755,6 +1765,7 @@
         accountType: document.querySelector('input[name="accountType"]:checked').value,
         accountNumber: document.getElementById('accountNumber').value,
         accountName: accountNameField.value,
+        relationship: document.getElementById('relationship').value,
       };
 
       document.getElementById('confirmName').textContent = formData.name;
@@ -1766,6 +1777,7 @@
       document.getElementById('confirmAccountType').textContent = formData.accountType === 'ordinary' ? '普通預金' : '当座預金';
       document.getElementById('confirmAccountNumber').textContent = formData.accountNumber;
       document.getElementById('confirmAccountName').textContent = formData.accountName;
+      document.getElementById('confirmRelationship').textContent = formData.relationship;
 
       const warningBanner = document.getElementById('accountNameWarning');
       if (!hasSpace(formData.accountName)) {
@@ -1814,6 +1826,7 @@
         accountType: formData.accountType === 'ordinary' ? '普通' : '当座',
         accountNumber: formData.accountNumber,
         accountName: formData.accountName,
+        relationship: formData.relationship,
         external: 'true'
       };
 
