@@ -744,23 +744,94 @@
       <!-- メインフォームコンテナ -->
       <div id="formContainer" style="display: none;">
         <!-- ステップインジケーター -->
-        <div class="steps">
+        <div class="steps" id="stepsIndicator">
           <div class="step active" id="step1">
             <div class="step-circle">1</div>
-            <div class="step-label">情報入力<br><small style="font-size: 10px;">Input</small></div>
+            <div class="step-label">同意確認<br><small style="font-size: 10px;">Agreement</small></div>
           </div>
           <div class="step" id="step2">
             <div class="step-circle">2</div>
-            <div class="step-label">確認<br><small style="font-size: 10px;">Confirm</small></div>
+            <div class="step-label">情報入力<br><small style="font-size: 10px;">Input</small></div>
           </div>
           <div class="step" id="step3">
             <div class="step-circle">3</div>
-            <div class="step-label">完了<br><small style="font-size: 10px;">Done</small></div>
+            <div class="step-label">確認・送信<br><small style="font-size: 10px;">Confirm</small></div>
+          </div>
+        </div>
+
+        <!-- 同意確認画面 -->
+        <div id="consentSection">
+          <div class="section">
+            <div class="section-title">
+              <span class="material-icons">gavel</span>
+              キャッシュバック申請に関する確認事項<br>
+              <small style="font-size: 12px; font-weight: 400; color: #666;">Agreement for Cashback Application</small>
+            </div>
+
+            <p style="color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.6;">
+              以下の内容をご確認のうえ、すべてにチェックを入れてください。<br>
+              <small style="color: #888;">Please read and check all boxes below to proceed.</small>
+            </p>
+
+            <!-- CB1: 申請意思の確認 -->
+            <div class="consent-section">
+              <div class="consent-title">1. 申請意思の確認 / Application Intent</div>
+              <p class="consent-description">
+                私は、株式会社テラのキャッシュバックキャンペーンに基づき、本フォームに入力した情報が正確であることを確認のうえ、自らの意思によりキャッシュバックの受取りを申請します。<br>
+                <small style="color: #666;">I confirm that the information entered in this form is accurate and I voluntarily apply to receive the cashback under the cashback campaign of Terra Corporation.</small>
+              </p>
+              <div class="checkbox-field" style="margin-top: 8px;">
+                <input type="checkbox" id="consentApplication">
+                <label for="consentApplication" class="checkbox-label">
+                  上記に同意します<br>
+                  <small style="color: #666;">I agree to the above</small>
+                </label>
+              </div>
+            </div>
+
+            <!-- CB2: 支払条件への同意 -->
+            <div class="consent-section">
+              <div class="consent-title">2. 支払条件への同意 / Payment Terms</div>
+              <p class="consent-description">
+                本フォームに入力した銀行口座への振込によりキャッシュバックを受領することに同意します。振込先口座情報の誤りに起因する入金の遅延・不着について、株式会社テラは再振込の対応は行いますが、誤入金先からの回収義務は負わないことに同意します。<br>
+                <small style="color: #666;">I agree to receive the cashback via bank transfer to the account entered in this form. I understand that Terra Corporation will re-process the transfer in case of errors, but is not liable for recovering funds sent to an incorrect account.</small>
+              </p>
+              <div class="checkbox-field" style="margin-top: 8px;">
+                <input type="checkbox" id="consentPayment">
+                <label for="consentPayment" class="checkbox-label">
+                  上記に同意します<br>
+                  <small style="color: #666;">I agree to the above</small>
+                </label>
+              </div>
+            </div>
+
+            <!-- CB3: 個人情報利用への同意 -->
+            <div class="consent-section">
+              <div class="consent-title">3. 個人情報利用への同意 / Privacy Consent</div>
+              <p class="consent-description">
+                入力した個人情報（氏名、電話番号、メールアドレス、銀行口座情報、住所）は、キャッシュバックの支払手続き、本人確認、およびお問い合わせ対応の目的に限り利用されることに同意します。<br>
+                <small style="color: #666;">I agree that the personal information entered (name, phone number, email address, bank account details, address) will be used solely for cashback payment processing, identity verification, and inquiry handling.</small>
+              </p>
+              <a href="https://www.terracom.co.jp/privacy_policy/" target="_blank" class="consent-link">▶ プライバシーポリシー / Privacy Policy</a>
+              <div class="checkbox-field" style="margin-top: 8px;">
+                <input type="checkbox" id="consentPrivacy">
+                <label for="consentPrivacy" class="checkbox-label">
+                  上記に同意します<br>
+                  <small style="color: #666;">I agree to the above</small>
+                </label>
+              </div>
+            </div>
+
+            <!-- 次へ進むボタン -->
+            <button class="button button-primary" id="consentNextButton" disabled>
+              <span class="material-icons">arrow_forward</span>
+              次へ進む / Proceed
+            </button>
           </div>
         </div>
 
         <!-- 入力画面 -->
-        <div id="inputSection">
+        <div id="inputSection" style="display: none;">
           <!-- 確認情報 -->
           <div class="section">
             <div class="section-title">
@@ -949,31 +1020,31 @@
               </select>
               <div class="help-text">口座名義は原則ご契約者本人のものをご登録ください。ご本人名義の口座がない場合、一親等以内のご親族の口座もご利用いただけます。<br><small style="color: #888;">Please register the contractor's own account. Accounts of first-degree relatives are also accepted.</small></div>
               <div class="error-text" id="relationshipError">続柄を選択してください / Please select a relationship</div>
+
+              <!-- CB4: 名義相違の確認（本人以外の時のみ表示） -->
+              <div id="consentRelationshipWrapper" style="display: none; margin-top: 16px;">
+                <div class="checkbox-field">
+                  <input type="checkbox" id="consentRelationship">
+                  <label for="consentRelationship" class="checkbox-label">
+                    口座名義人は契約者本人の一親等以内の親族であること、および契約者本人の同意を得ていることを確認します。<br>
+                    <small style="color: #666;">I confirm that the account holder is a first-degree relative of the contractor and that the contractor has given consent.</small>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- 個人情報取扱同意 -->
-          <div class="consent-section">
-            <div class="consent-title">個人情報の取扱いについて / Handling of Personal Information</div>
-            <p class="consent-description">
-              ご入力いただいた個人情報は、キャッシュバックの支払手続き、本人確認、およびお問い合わせ対応の目的に限り利用いたします。詳しくは「プライバシーポリシー」をご確認ください。<br>
-              <small style="color: #666;">Your personal information will be used solely for cashback payment processing, identity verification, and inquiry handling. Please refer to our Privacy Policy for details.</small>
-            </p>
-            <a href="https://www.terracom.co.jp/privacy_policy/" target="_blank" class="consent-link">▶ プライバシーポリシー / Privacy Policy</a>
-            <div class="checkbox-field" style="margin-top: 12px;">
-              <input type="checkbox" id="consent">
-              <label for="consent" class="checkbox-label">
-                上記の個人情報の取扱いに同意します<br>
-                <small style="color: #666;">I agree to the handling of personal information described above</small>
-              </label>
-            </div>
+          <!-- 戻る・確認ボタン -->
+          <div class="button-group">
+            <button class="button button-secondary" id="backToConsentButton">
+              <span class="material-icons">arrow_back</span>
+              戻る / Back
+            </button>
+            <button class="button button-primary" id="confirmButton" disabled>
+              <span class="material-icons">check_circle</span>
+              確認画面へ / Confirm
+            </button>
           </div>
-
-          <!-- 確認ボタン -->
-          <button class="button button-primary" id="confirmButton" disabled>
-            <span class="material-icons">check_circle</span>
-            確認画面へ / Confirm
-          </button>
         </div>
 
         <!-- 確認画面 -->
@@ -1445,13 +1516,30 @@
         });
       });
 
-      document.getElementById('consent').addEventListener('change', validateForm);
+      // 同意チェックボックス（Step 1）
+      document.getElementById('consentApplication').addEventListener('change', validateConsent);
+      document.getElementById('consentPayment').addEventListener('change', validateConsent);
+      document.getElementById('consentPrivacy').addEventListener('change', validateConsent);
+
+      // CB4（名義相違）と続柄
+      document.getElementById('consentRelationship').addEventListener('change', validateForm);
       document.getElementById('relationship').addEventListener('change', function() {
+        const value = this.value;
+        const cb4Wrapper = document.getElementById('consentRelationshipWrapper');
+        const cb4Checkbox = document.getElementById('consentRelationship');
+        if (value && value !== '本人') {
+          cb4Wrapper.style.display = 'block';
+        } else {
+          cb4Wrapper.style.display = 'none';
+          cb4Checkbox.checked = false;
+        }
         validateForm();
         autoSave();
       });
 
       // ボタン
+      document.getElementById('consentNextButton').addEventListener('click', proceedToInput);
+      document.getElementById('backToConsentButton').addEventListener('click', backToConsent);
       document.getElementById('confirmButton').addEventListener('click', showConfirmation);
       document.getElementById('backButton').addEventListener('click', backToInput);
       document.getElementById('submitButton').addEventListener('click', submitForm);
@@ -1679,13 +1767,20 @@
       return div.innerHTML;
     }
 
-    // バリデーション
+    // 同意ページバリデーション
+    function validateConsent() {
+      const cb1 = document.getElementById('consentApplication').checked;
+      const cb2 = document.getElementById('consentPayment').checked;
+      const cb3 = document.getElementById('consentPrivacy').checked;
+      document.getElementById('consentNextButton').disabled = !(cb1 && cb2 && cb3);
+    }
+
+    // 入力フォームバリデーション
     function validateForm() {
       const email = document.getElementById('email').value;
       const accountNumber = document.getElementById('accountNumber').value;
       const accountName = document.getElementById('accountName').value;
       const relationship = document.getElementById('relationship').value;
-      const consent = document.getElementById('consent').checked;
 
       let isValid = true;
 
@@ -1709,8 +1804,11 @@
         isValid = false;
       }
 
-      if (!consent) {
-        isValid = false;
+      // CB4: 続柄が本人以外の場合は名義相違確認が必須
+      if (relationship && relationship !== '本人') {
+        if (!document.getElementById('consentRelationship').checked) {
+          isValid = false;
+        }
       }
 
       document.getElementById('confirmButton').disabled = !isValid;
@@ -1793,6 +1891,30 @@
       return /\s/.test(text);
     }
 
+    // 同意ページ → 入力ページ
+    function proceedToInput() {
+      document.getElementById('consentSection').style.display = 'none';
+      document.getElementById('inputSection').style.display = 'block';
+
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step1').classList.add('completed');
+      document.getElementById('step2').classList.add('active');
+
+      window.scrollTo(0, 0);
+    }
+
+    // 入力ページ → 同意ページ
+    function backToConsent() {
+      document.getElementById('inputSection').style.display = 'none';
+      document.getElementById('consentSection').style.display = 'block';
+
+      document.getElementById('step1').classList.remove('completed');
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('step2').classList.remove('active');
+
+      window.scrollTo(0, 0);
+    }
+
     // 確認画面表示
     function showConfirmation() {
       const accountNameField = document.getElementById('accountName');
@@ -1832,21 +1954,21 @@
       document.getElementById('inputSection').style.display = 'none';
       document.getElementById('confirmationSection').classList.add('show');
 
-      document.getElementById('step1').classList.remove('active');
-      document.getElementById('step1').classList.add('completed');
-      document.getElementById('step2').classList.add('active');
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step2').classList.add('completed');
+      document.getElementById('step3').classList.add('active');
 
       window.scrollTo(0, 0);
     }
 
-    // 入力画面に戻る
+    // 確認画面 → 入力画面に戻る
     function backToInput() {
       document.getElementById('confirmationSection').classList.remove('show');
       document.getElementById('inputSection').style.display = 'block';
 
-      document.getElementById('step1').classList.remove('completed');
-      document.getElementById('step1').classList.add('active');
-      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step2').classList.remove('completed');
+      document.getElementById('step2').classList.add('active');
+      document.getElementById('step3').classList.remove('active');
 
       window.scrollTo(0, 0);
     }
@@ -1870,6 +1992,10 @@
         accountNumber: formData.accountNumber,
         accountName: formData.accountName,
         relationship: formData.relationship,
+        consentApplication: 'true',
+        consentPayment: 'true',
+        consentPrivacy: 'true',
+        consentRelationship: (formData.relationship !== '本人') ? 'true' : '',
         external: 'true'
       };
 
@@ -1975,7 +2101,8 @@
       `;
 
       document.querySelector('.main').innerHTML = resultHtml;
-      document.querySelector('.steps').style.display = 'none';
+      const stepsEl = document.getElementById('stepsIndicator');
+      if (stepsEl) stepsEl.style.display = 'none';
     }
 
     // 電話番号フォーマット
