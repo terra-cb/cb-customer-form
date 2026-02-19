@@ -346,6 +346,41 @@
       font-weight: 500;
     }
 
+    /* 個人情報同意セクション */
+    .consent-section {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .consent-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .consent-description {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.8;
+      margin: 0 0 12px 0;
+    }
+
+    .consent-link {
+      display: inline-block;
+      font-size: 14px;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .consent-link:hover {
+      text-decoration: underline;
+    }
+
     /* チェックボックス */
     .checkbox-field {
       display: flex;
@@ -918,12 +953,20 @@
           </div>
 
           <!-- 個人情報取扱同意 -->
-          <div class="checkbox-field">
-            <input type="checkbox" id="consent">
-            <label for="consent" class="checkbox-label">
-              <a href="https://www.terracom.co.jp/privacy_policy/" target="_blank">個人情報の取扱いに関する同意事項</a>を確認し、同意します<br>
-              <small style="color: #666;">I have read and agree to the <a href="https://www.terracom.co.jp/privacy_policy/" target="_blank">privacy policy</a></small>
-            </label>
+          <div class="consent-section">
+            <div class="consent-title">個人情報の取扱いについて / Handling of Personal Information</div>
+            <p class="consent-description">
+              ご入力いただいた個人情報は、キャッシュバックの支払手続き、本人確認、およびお問い合わせ対応の目的に限り利用いたします。詳しくは「プライバシーポリシー」をご確認ください。<br>
+              <small style="color: #666;">Your personal information will be used solely for cashback payment processing, identity verification, and inquiry handling. Please refer to our Privacy Policy for details.</small>
+            </p>
+            <a href="https://www.terracom.co.jp/privacy_policy/" target="_blank" class="consent-link">▶ プライバシーポリシー / Privacy Policy</a>
+            <div class="checkbox-field" style="margin-top: 12px;">
+              <input type="checkbox" id="consent">
+              <label for="consent" class="checkbox-label">
+                上記の個人情報の取扱いに同意します<br>
+                <small style="color: #666;">I agree to the handling of personal information described above</small>
+              </label>
+            </div>
           </div>
 
           <!-- 確認ボタン -->
