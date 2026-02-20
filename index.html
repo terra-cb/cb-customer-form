@@ -777,8 +777,8 @@
             <div class="consent-section">
               <div class="consent-title">1. 申請意思の確認 / Application Intent</div>
               <p class="consent-description">
-                私は、株式会社テラのキャッシュバックキャンペーンに基づき、本フォームに入力した情報が正確であることを確認のうえ、自らの意思によりキャッシュバックの受取りを申請します。<br>
-                <small style="color: #666;">I confirm that the information entered in this form is accurate and I voluntarily apply to receive the cashback under the cashback campaign of Terra Corporation.</small>
+                私は、<span class="company-name">当社</span>のキャッシュバックキャンペーンに基づき、本フォームに入力した情報が正確であることを確認のうえ、自らの意思によりキャッシュバックの受取りを申請します。<br>
+                <small style="color: #666;">I confirm that the information entered in this form is accurate and I voluntarily apply to receive the cashback under the cashback campaign of <span class="company-name-en">the Company</span>.</small>
               </p>
               <div class="checkbox-field" style="margin-top: 8px;">
                 <input type="checkbox" id="consentApplication">
@@ -793,8 +793,8 @@
             <div class="consent-section">
               <div class="consent-title">2. 支払条件への同意 / Payment Terms</div>
               <p class="consent-description">
-                本フォームに入力した銀行口座への振込によりキャッシュバックを受領することに同意します。振込先口座情報の誤りに起因する入金の遅延・不着について、株式会社テラは再振込の対応は行いますが、誤入金先からの回収義務は負わないことに同意します。<br>
-                <small style="color: #666;">I agree to receive the cashback via bank transfer to the account entered in this form. I understand that Terra Corporation will re-process the transfer in case of errors, but is not liable for recovering funds sent to an incorrect account.</small>
+                本フォームに入力した銀行口座への振込によりキャッシュバックを受領することに同意します。振込先口座情報の誤りに起因する入金の遅延・不着について、<span class="company-name">当社</span>は再振込の対応は行いますが、誤入金先からの回収義務は負わないことに同意します。<br>
+                <small style="color: #666;">I agree to receive the cashback via bank transfer to the account entered in this form. I understand that <span class="company-name-en">the Company</span> will re-process the transfer in case of errors, but is not liable for recovering funds sent to an incorrect account.</small>
               </p>
               <div class="checkbox-field" style="margin-top: 8px;">
                 <input type="checkbox" id="consentPayment">
@@ -812,7 +812,7 @@
                 入力した個人情報（氏名、電話番号、メールアドレス、銀行口座情報、住所）は、キャッシュバックの支払手続き、本人確認、およびお問い合わせ対応の目的に限り利用されることに同意します。<br>
                 <small style="color: #666;">I agree that the personal information entered (name, phone number, email address, bank account details, address) will be used solely for cashback payment processing, identity verification, and inquiry handling.</small>
               </p>
-              <a href="https://www.terracom.co.jp/privacy_policy/" target="_blank" class="consent-link">▶ プライバシーポリシー / Privacy Policy</a>
+              <a id="privacyPolicyLink" href="https://www.terracom.co.jp/privacy_policy/" target="_blank" class="consent-link">▶ プライバシーポリシー / Privacy Policy</a>
               <div class="checkbox-field" style="margin-top: 8px;">
                 <input type="checkbox" id="consentPrivacy">
                 <label for="consentPrivacy" class="checkbox-label">
@@ -870,6 +870,52 @@
               >
               <div class="help-text">振込完了通知やエラー発生時の連絡に使用します<br><small style="color: #888;">Used for transfer completion notifications and error alerts</small></div>
               <div class="error-text" id="emailError">正しいメールアドレスを入力してください / Please enter a valid email address</div>
+            </div>
+          </div>
+
+          <!-- 住所 -->
+          <div class="section">
+            <div class="section-title">
+              <span class="material-icons">location_on</span>
+              住所 / Address
+            </div>
+            <div class="form-field">
+              <label class="form-label">
+                郵便番号 / Postal Code
+                <span class="optional">（住所自動入力 / Auto-fill）</span>
+              </label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input
+                  type="text"
+                  class="form-input"
+                  id="postalCode"
+                  placeholder="1500001"
+                  maxlength="8"
+                  inputmode="numeric"
+                  autocomplete="postal-code"
+                  style="flex: 1;"
+                >
+                <button type="button" class="button button-secondary" id="postalSearchBtn" style="width: auto; padding: 12px 16px; white-space: nowrap;">
+                  <span class="material-icons" style="font-size: 18px;">search</span>
+                  検索
+                </button>
+              </div>
+              <div class="help-text">ハイフンなし7桁で入力してください<br><small style="color: #888;">Enter 7 digits without hyphen</small></div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">
+                住所 / Address
+                <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-input"
+                id="address"
+                placeholder="例: 東京都渋谷区神宮前1-2-3"
+                autocomplete="street-address"
+              >
+              <div class="help-text">都道府県から番地・建物名まで入力してください<br><small style="color: #888;">Enter full address including prefecture, city, and building name</small></div>
+              <div class="error-text" id="addressError">住所を入力してください / Please enter your address</div>
             </div>
           </div>
 
@@ -1099,6 +1145,10 @@
                 <div class="confirm-value" id="confirmAmount"></div>
               </div>
               <div class="confirm-item">
+                <div class="confirm-label">住所 / Address</div>
+                <div class="confirm-value" id="confirmAddress"></div>
+              </div>
+              <div class="confirm-item">
                 <div class="confirm-label">銀行名 / Bank</div>
                 <div class="confirm-value" id="confirmBank"></div>
               </div>
@@ -1264,7 +1314,10 @@
           phone: data.p,
           amount: data.a,
           storeName: data.s,
-          email: data.e
+          email: data.e,
+          companyName: data.cn || '',
+          companyNameEn: data.ce || '',
+          privacyPolicyUrl: data.pp || '',
         };
       } catch (e) {
         console.error('Failed to decode reception data:', e);
@@ -1286,6 +1339,23 @@
         if (!receptionData) {
           showError('INVALID_TOKEN_FORMAT');
           return;
+        }
+
+        // 事業者情報をDOMに差し込み
+        if (receptionData.companyName) {
+          document.querySelectorAll('.company-name').forEach(function(el) { el.textContent = receptionData.companyName; });
+        }
+        if (receptionData.companyNameEn) {
+          document.querySelectorAll('.company-name-en').forEach(function(el) { el.textContent = receptionData.companyNameEn; });
+        }
+        var privacyLink = document.getElementById('privacyPolicyLink');
+        if (privacyLink) {
+          if (receptionData.privacyPolicyUrl) {
+            privacyLink.href = receptionData.privacyPolicyUrl;
+            privacyLink.style.display = '';
+          } else {
+            privacyLink.style.display = 'none';
+          }
         }
 
         // トークン状態確認（Worker KV経由）
@@ -1451,6 +1521,29 @@
       branchSearch.addEventListener('focus', function() {
         if (this.value && selectedBank) {
           searchBranches(this.value);
+        }
+      });
+
+      // 住所フィールド
+      document.getElementById('address').addEventListener('input', function() {
+        validateForm();
+        autoSave();
+      });
+
+      // 郵便番号フィールド
+      const postalCodeEl = document.getElementById('postalCode');
+      postalCodeEl.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9\-]/g, '');
+        const digits = e.target.value.replace(/\-/g, '');
+        if (digits.length === 7) {
+          searchPostalCode(digits);
+        }
+      });
+
+      document.getElementById('postalSearchBtn').addEventListener('click', function() {
+        const digits = postalCodeEl.value.replace(/\-/g, '');
+        if (digits.length === 7) {
+          searchPostalCode(digits);
         }
       });
 
@@ -1778,6 +1871,7 @@
     // 入力フォームバリデーション
     function validateForm() {
       const email = document.getElementById('email').value;
+      const address = document.getElementById('address').value.trim();
       const accountNumber = document.getElementById('accountNumber').value;
       const accountName = document.getElementById('accountName').value;
       const relationship = document.getElementById('relationship').value;
@@ -1785,6 +1879,10 @@
       let isValid = true;
 
       if (!email || !validateEmail(email)) {
+        isValid = false;
+      }
+
+      if (!address) {
         isValid = false;
       }
 
@@ -1836,6 +1934,7 @@
         const data = {
           token: TOKEN,
           email: document.getElementById('email').value,
+          address: document.getElementById('address').value,
           bankCode: selectedBank?.code,
           bankName: selectedBank?.name,
           branchCode: selectedBranch?.code,
@@ -1865,6 +1964,7 @@
         const data = JSON.parse(saved);
 
         if (data.email) document.getElementById('email').value = data.email;
+        if (data.address) document.getElementById('address').value = data.address;
         if (data.bankCode && data.bankName) {
           selectBank(data.bankCode, data.bankName, '');
         }
@@ -1925,6 +2025,7 @@
         phone: receptionData.phone,
         amount: receptionData.amount,
         email: document.getElementById('email').value,
+        address: document.getElementById('address').value.trim(),
         bank: selectedBank,
         branch: selectedBranch,
         accountType: document.querySelector('input[name="accountType"]:checked').value,
@@ -1937,6 +2038,7 @@
       document.getElementById('confirmPhone').textContent = formatPhoneNumber(formData.phone);
       document.getElementById('confirmEmail').textContent = formData.email;
       document.getElementById('confirmAmount').textContent = formData.amount.toLocaleString() + '円';
+      document.getElementById('confirmAddress').textContent = formData.address;
       document.getElementById('confirmBank').textContent = formData.bank.name;
       document.getElementById('confirmBranch').textContent = formData.branch.name;
       document.getElementById('confirmAccountType').textContent = formData.accountType === 'ordinary' ? '普通預金' : '当座預金';
@@ -1984,6 +2086,7 @@
       const fields = {
         token: TOKEN,
         email: formData.email,
+        address: formData.address,
         bankCode: formData.bank.code,
         bankName: formData.bank.name,
         branchCode: formData.branch.code,
@@ -2103,6 +2206,24 @@
       document.querySelector('.main').innerHTML = resultHtml;
       const stepsEl = document.getElementById('stepsIndicator');
       if (stepsEl) stepsEl.style.display = 'none';
+    }
+
+    // 郵便番号から住所検索
+    async function searchPostalCode(zipcode) {
+      try {
+        const response = await fetch('https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zipcode);
+        const result = await response.json();
+        if (result.status === 200 && result.results && result.results.length > 0) {
+          const addr = result.results[0];
+          const fullAddress = addr.address1 + addr.address2 + addr.address3;
+          document.getElementById('address').value = fullAddress;
+          document.getElementById('address').focus();
+          validateForm();
+          autoSave();
+        }
+      } catch (error) {
+        console.error('Postal code search error:', error);
+      }
     }
 
     // 電話番号フォーマット
