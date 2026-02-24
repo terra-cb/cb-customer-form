@@ -1005,6 +1005,34 @@
               <div class="error-text" id="accountNameError">全角カタカナで入力してください / Please enter in Katakana</div>
             </div>
 
+            <!-- 契約者との続柄 -->
+            <div class="form-field">
+              <label class="form-label">
+                契約者との続柄 / Relationship to Contractor
+                <span class="required">*</span>
+              </label>
+              <select class="form-input" id="relationship">
+                <option value="">選択してください / Please select</option>
+                <option value="本人">本人 / Self</option>
+                <option value="配偶者">配偶者 / Spouse</option>
+                <option value="親">親 / Parent</option>
+                <option value="子">子 / Child</option>
+              </select>
+              <div class="help-text" style="color: #e65100;">※口座名義は原則ご契約者本人のものをご登録ください。ご本人名義の口座がない場合、一親等以内のご親族の口座もご利用いただけます。<br><small style="color: #888;">Please register the contractor's own account. Accounts of first-degree relatives are also accepted.</small></div>
+              <div class="error-text" id="relationshipError">続柄を選択してください / Please select a relationship</div>
+
+              <!-- CB4: 名義相違の確認（本人以外の時のみ表示） -->
+              <div id="consentRelationshipWrapper" style="display: none; margin-top: 16px;">
+                <div class="checkbox-field">
+                  <input type="checkbox" id="consentRelationship">
+                  <label for="consentRelationship" class="checkbox-label">
+                    口座名義人は契約者本人の一親等以内の親族であること、および契約者本人の同意を得ていることを確認します。<br>
+                    <small style="color: #666;">I confirm that the account holder is a first-degree relative of the contractor and that the contractor has given consent.</small>
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <!-- 口座名義人 住所 -->
             <div class="form-field">
               <label class="form-label">
@@ -1043,34 +1071,6 @@
               >
               <div class="help-text">都道府県から番地・建物名まで入力してください<br><small style="color: #888;">Enter full address including prefecture, city, and building name</small></div>
               <div class="error-text" id="addressError">住所を入力してください / Please enter your address</div>
-            </div>
-
-            <!-- 契約者との続柄 -->
-            <div class="form-field">
-              <label class="form-label">
-                契約者との続柄 / Relationship to Contractor
-                <span class="required">*</span>
-              </label>
-              <select class="form-input" id="relationship">
-                <option value="">選択してください / Please select</option>
-                <option value="本人">本人 / Self</option>
-                <option value="配偶者">配偶者 / Spouse</option>
-                <option value="親">親 / Parent</option>
-                <option value="子">子 / Child</option>
-              </select>
-              <div class="help-text">口座名義は原則ご契約者本人のものをご登録ください。ご本人名義の口座がない場合、一親等以内のご親族の口座もご利用いただけます。<br><small style="color: #888;">Please register the contractor's own account. Accounts of first-degree relatives are also accepted.</small></div>
-              <div class="error-text" id="relationshipError">続柄を選択してください / Please select a relationship</div>
-
-              <!-- CB4: 名義相違の確認（本人以外の時のみ表示） -->
-              <div id="consentRelationshipWrapper" style="display: none; margin-top: 16px;">
-                <div class="checkbox-field">
-                  <input type="checkbox" id="consentRelationship">
-                  <label for="consentRelationship" class="checkbox-label">
-                    口座名義人は契約者本人の一親等以内の親族であること、および契約者本人の同意を得ていることを確認します。<br>
-                    <small style="color: #666;">I confirm that the account holder is a first-degree relative of the contractor and that the contractor has given consent.</small>
-                  </label>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -1159,12 +1159,12 @@
                 <div class="confirm-value" id="confirmAccountName"></div>
               </div>
               <div class="confirm-item">
-                <div class="confirm-label">口座名義人 住所 / Account Holder Address</div>
-                <div class="confirm-value" id="confirmAddress"></div>
-              </div>
-              <div class="confirm-item">
                 <div class="confirm-label">契約者との続柄 / Relationship</div>
                 <div class="confirm-value" id="confirmRelationship"></div>
+              </div>
+              <div class="confirm-item">
+                <div class="confirm-label">口座名義人 住所 / Account Holder Address</div>
+                <div class="confirm-value" id="confirmAddress"></div>
               </div>
             </div>
 
