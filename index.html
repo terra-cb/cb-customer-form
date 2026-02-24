@@ -1971,7 +1971,21 @@
         }
         if (data.accountNumber) document.getElementById('accountNumber').value = data.accountNumber;
         if (data.accountName) document.getElementById('accountName').value = data.accountName;
-        if (data.relationship) document.getElementById('relationship').value = data.relationship;
+        if (data.relationship) {
+          // 旧値「親」「子」を「親子」にマイグレーション
+          var rel = data.relationship;
+          if (rel === '親' || rel === '子') rel = '親子';
+          document.getElementById('relationship').value = rel;
+          // CB4表示制御を手動発火
+          var cb4Wrapper = document.getElementById('consentRelationshipWrapper');
+          var cb4Checkbox = document.getElementById('consentRelationship');
+          if (rel && rel !== '本人') {
+            cb4Wrapper.style.display = 'block';
+          } else {
+            cb4Wrapper.style.display = 'none';
+            cb4Checkbox.checked = false;
+          }
+        }
 
         validateForm();
       } catch (e) {
