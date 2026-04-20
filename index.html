@@ -1174,6 +1174,7 @@
             <div style="display: flex; justify-content: center; margin: 24px 0;">
               <div class="cf-turnstile" data-sitekey="0x4AAAAAAC_68ChxkjdRkuc2" data-callback="onTurnstileSuccess" data-expired-callback="onTurnstileExpired" data-error-callback="onTurnstileError"></div>
             </div>
+            <div id="turnstileMessage" style="text-align: center; font-size: 14px; margin: 8px 0 16px; display: none; line-height: 1.5;"></div>
 
             <div class="button-group">
               <button class="button button-secondary" id="backButton">
@@ -1233,21 +1234,39 @@
     let formData = {};
     let turnstileToken = '';
 
+    // Turnstile メッセージ表示
+    function setTurnstileMessage(text, type) {
+      const el = document.getElementById('turnstileMessage');
+      if (!el) return;
+      if (!text) {
+        el.style.display = 'none';
+        el.textContent = '';
+        return;
+      }
+      el.textContent = text;
+      el.style.color = type === 'warning' ? '#e67e22' : '#e74c3c';
+      el.style.display = 'block';
+    }
+
+    // Turnstile トークン設定（成功時 token、失効/エラー時 ''）
+    function setTurnstileToken(token) {
+      turnstileToken = token || '';
+      const btn = document.getElementById('submitButton');
+      if (btn) btn.disabled = !turnstileToken;
+    }
+
     // Turnstile コールバック（グローバル公開）
     window.onTurnstileSuccess = function(token) {
-      turnstileToken = token;
-      const btn = document.getElementById('submitButton');
-      if (btn) btn.disabled = false;
+      setTurnstileToken(token);
+      setTurnstileMessage('', '');
     };
     window.onTurnstileExpired = function() {
-      turnstileToken = '';
-      const btn = document.getElementById('submitButton');
-      if (btn) btn.disabled = true;
+      setTurnstileToken('');
+      setTurnstileMessage('認証の有効期限が切れました。もう一度チェックを完了してください。 / Verification expired. Please retry.', 'warning');
     };
     window.onTurnstileError = function() {
-      turnstileToken = '';
-      const btn = document.getElementById('submitButton');
-      if (btn) btn.disabled = true;
+      setTurnstileToken('');
+      setTurnstileMessage('認証エラーが発生しました。ページを再読み込みしてください。 / Verification error. Please reload the page.', 'error');
     };
 
     // JSONP リクエスト関数（CORS回避用）
@@ -2139,19 +2158,35 @@
       fetch(WORKER_URL + '/submit', {
         method: 'POST',
         body: submitData
-      }).then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
-          } else {
-            console.error('Submit failed:', data.error);
-            showSubmitResult(false, 'エラーが発生しました。<br>しばらく経ってから再度お試しください。<br><small style="color: #888;">An error occurred. Please try again later.</small>');
-          }
-        })
+      }).then(async response => {
+        const data = await response.json().catch(() => ({ success: false }));
+        if (data.success) {
+          showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
+          return;
+        }
+        // Turnstile 検証失敗: 確認画面に戻して再チャレンジ
+        if (response.status === 403) {
+          recoverFromTurnstileFailure();
+          return;
+        }
+        console.error('Submit failed:', data.error);
+        showSubmitResult(false, 'エラーが発生しました。<br>しばらく経ってから再度お試しください。<br><small style="color: #888;">An error occurred. Please try again later.</small>');
+      })
         .catch(error => {
           console.error('Submit error:', error);
           showSubmitResult(false, 'サーバーに接続できませんでした。<br>しばらく経ってから再度お試しください。<br><small style="color: #888;">Could not connect to the server. Please try again later.</small>');
         });
+    }
+
+    // Turnstile 検証失敗時、確認画面に戻して widget をリセット
+    function recoverFromTurnstileFailure() {
+      document.getElementById('loadingSection').classList.remove('show');
+      document.getElementById('confirmationSection').classList.add('show');
+      setTurnstileToken('');
+      if (window.turnstile && typeof window.turnstile.reset === 'function') {
+        try { window.turnstile.reset(); } catch (e) { console.error('Turnstile reset failed:', e); }
+      }
+      setTurnstileMessage('認証の有効期限が切れました。もう一度チェックを完了してから送信してください。 / Verification expired. Please retry.', 'warning');
     }
 
     function showSubmitResult(success, message) {
