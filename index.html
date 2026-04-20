@@ -1211,11 +1211,8 @@
   </div>
 
   <script>
-    // 設定（静的ホスティング用）
-    const GAS_URL = 'https://script.google.com/a/macros/terracom.co.jp/s/AKfycbwl__0N9PAeTRFpXBHYVNVe72vGsTLGdJTaRyeqMHejPiLNbzxGfHTuDy2L8ojSFzpi/exec';
-    // Cloudflare Worker URL
+    // Cloudflare Worker URL（送信先）
     const WORKER_URL = 'https://cb-form-proxy.yokoyama-haruka.workers.dev';
-    const BASE_URL = GAS_URL;
     const TOKEN = new URLSearchParams(window.location.search).get('token') || '';
     const ENCODED_DATA = new URLSearchParams(window.location.search).get('d') || '';
 
@@ -2126,72 +2123,8 @@
         })
         .catch(error => {
           console.error('Submit error:', error);
-          // フォールバック：直接GASに送信を試みる（no-corsモード）
-          submitDirectToGAS(fields);
+          showSubmitResult(false, 'サーバーに接続できませんでした。<br>しばらく経ってから再度お試しください。<br><small style="color: #888;">Could not connect to the server. Please try again later.</small>');
         });
-    }
-
-    // 直接GASに送信（フォールバック）
-    function submitDirectToGAS(fields) {
-      const submitData = new FormData();
-      for (const [key, value] of Object.entries(fields)) {
-        submitData.append(key, value);
-      }
-
-      fetch(GAS_URL + '?path=external-form', {
-        method: 'POST',
-        mode: 'no-cors',
-        body: submitData
-      }).then(() => {
-        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
-      }).catch(error => {
-        console.error('Direct GAS submit error:', error);
-        submitViaIframe(fields);
-      });
-    }
-
-    // iframeによるフォールバック送信
-    function submitViaIframe(fields) {
-      const iframeName = 'submitFrame_' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = GAS_URL + '?path=external-form';
-      form.target = iframeName;
-
-      for (const [key, value] of Object.entries(fields)) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      }
-
-      document.body.appendChild(form);
-
-      const timeout = setTimeout(() => {
-        showSubmitResult(true, '送信処理中です。しばらくお待ちください。<br><small style="color: #888;">Processing. Please wait...</small>');
-        cleanup();
-      }, 10000);
-
-      iframe.onload = function() {
-        clearTimeout(timeout);
-        showSubmitResult(true, '口座情報の登録が完了しました。<br>このページを閉じてください。<br><small style="color: #888;">Registration complete. You may close this page.</small>');
-        cleanup();
-      };
-
-      function cleanup() {
-        setTimeout(() => {
-          if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-          if (form.parentNode) form.parentNode.removeChild(form);
-        }, 1000);
-      }
-
-      form.submit();
     }
 
     function showSubmitResult(success, message) {
