@@ -1698,12 +1698,23 @@
       return result;
     }
 
-    // 検索用にカナを正規化（全角カナに統一）
+    // 検索用に文字列を正規化
     function normalizeForSearch(text) {
       // ひらがな → カタカナ
       let result = text.replace(/[ぁ-ん]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) + 0x60);
       });
+
+      // 全角英数 → 半角英数（ａｕじぶん → auじぶん）
+      result = result.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+      });
+
+      // 小文字化
+      result = result.toLowerCase();
+
+      // 長音記号の統一（全角ハイフンマイナス等を ー に揃える）
+      result = result.replace(/[－‐―ｰ]/g, 'ー');
 
       // 半角カナ → 全角カナ
       const halfToFull = {
@@ -1759,10 +1770,10 @@
       const normalizedKeywordSmall = normalizeKana(normalizedKeyword);
 
       const filtered = banksCache.filter(bank => {
+        const normalizedBankName = normalizeForSearch(bank.name || '');
         const normalizedBankKana = normalizeForSearch(bank.kana || '');
         const normalizedBankKanaSmall = normalizeKana(normalizedBankKana);
-        // 前方一致検索
-        return bank.name.startsWith(keyword) ||
+        return normalizedBankName.startsWith(normalizedKeyword) ||
           normalizedBankKana.startsWith(normalizedKeyword) ||
           normalizedBankKanaSmall.startsWith(normalizedKeywordSmall);
       });
@@ -1844,8 +1855,9 @@
       // 前方一致検索
       const normalizedKeywordFull = normalizeForSearch(keyword);
       const filtered = branches.filter(branch => {
+        const normalizedBranchName = normalizeForSearch(branch.name || '');
         const normalizedBranchKana = normalizeForSearch(branch.kana || '');
-        return branch.name.startsWith(keyword) ||
+        return normalizedBranchName.startsWith(normalizedKeywordFull) ||
           normalizedBranchKana.startsWith(normalizedKeywordFull) ||
           normalizeKana(normalizedBranchKana).startsWith(normalizedKeyword);
       });
