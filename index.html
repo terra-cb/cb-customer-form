@@ -1233,6 +1233,10 @@
     let branchesCache = {};
     let selectedBank = null;
     let selectedBranch = null;
+    // 検索結果の保持用（onclick にはインデックスのみを渡し、名称等の文字列を
+    // インライン JS に埋め込まない。CBlist 側 gas/src/CustomerForm.html と同期。Issue #249）
+    let currentBankResults = [];
+    let currentBranchResults = [];
     let formData = {};
     let turnstileToken = '';
 
@@ -1796,8 +1800,9 @@
         `;
       }
 
-      html += filtered.slice(0, 20).map(bank => `
-        <div class="search-result-item" onclick="selectBank('${bank.code}', '${escapeHtml(bank.name)}', '${escapeHtml(bank.kana)}')">
+      currentBankResults = filtered.slice(0, 20);
+      html += currentBankResults.map((bank, index) => `
+        <div class="search-result-item" onclick="selectBankByIndex(${Number(index)})">
           <span class="result-code">${bank.code}</span>
           <span class="result-name">${escapeHtml(bank.name)}</span>
           <span class="result-kana">${escapeHtml(bank.kana)}</span>
@@ -1806,6 +1811,13 @@
 
       results.innerHTML = html;
       results.classList.add('show');
+    }
+
+    // 銀行選択（検索結果クリック用。onclick に文字列を埋め込まないためのインデックス方式）
+    function selectBankByIndex(index) {
+      const bank = currentBankResults[index];
+      if (!bank) return;
+      selectBank(bank.code, bank.name, bank.kana);
     }
 
     // 銀行選択
@@ -1880,8 +1892,9 @@
         `;
       }
 
-      html += filtered.slice(0, 20).map(branch => `
-        <div class="search-result-item" onclick="selectBranch('${branch.code}', '${escapeHtml(branch.name)}', '${escapeHtml(branch.kana)}')">
+      currentBranchResults = filtered.slice(0, 20);
+      html += currentBranchResults.map((branch, index) => `
+        <div class="search-result-item" onclick="selectBranchByIndex(${Number(index)})">
           <span class="result-code">${branch.code}</span>
           <span class="result-name">${escapeHtml(branch.name)}</span>
           <span class="result-kana">${escapeHtml(branch.kana)}</span>
@@ -1890,6 +1903,13 @@
 
       results.innerHTML = html;
       results.classList.add('show');
+    }
+
+    // 支店選択（検索結果クリック用。onclick に文字列を埋め込まないためのインデックス方式）
+    function selectBranchByIndex(index) {
+      const branch = currentBranchResults[index];
+      if (!branch) return;
+      selectBranch(branch.code, branch.name, branch.kana);
     }
 
     // 支店選択
@@ -1902,11 +1922,16 @@
       autoSave();
     }
 
-    // HTMLエスケープ
+    // HTMLエスケープ（5文字置換チェーン。DOM 方式は ' " をエスケープしないため使わない。
+    // CBlist 側 gas/src/CustomerForm.html の escapeHtml と同期。Issue #249）
     function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+      if (text == null) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     // 同意ページバリデーション
