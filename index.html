@@ -1459,6 +1459,20 @@
       document.getElementById('errorSection').classList.add('show');
     }
 
+    // 配信元 zengin-code が反映できていない金融機関名の暫定上書き。
+    // 配信元が追いついたら、この定数と参照箇所ごと削除する。
+    //
+    // 0038: 2026-08-03 に住信SBIネット銀行→ドコモSMTBネット銀行へ商号変更。
+    // 配信元は 2026-06-30 から更新が止まっており改称対応 PR も未マージのため、
+    // 顧客が「ドコモ」で検索しても候補に出ない状態になっていた。
+    //
+    // kana は意図的に上書きしない。旧カナを残すことで「スミシン」でも引けて
+    // 移行期の両表記に対応できる。また kana は全銀レコードの被仕向銀行名に
+    // 使われる値で、正式なカナ表記が未確認のため触らない。
+    const BANK_NAME_OVERRIDES = {
+      '0038': 'ドコモＳＭＴＢネット'
+    };
+
     // 銀行データを取得（zengin-codeから直接取得）
     async function loadBanks() {
       try {
@@ -1467,7 +1481,7 @@
         // オブジェクト形式から配列形式に変換
         banksCache = Object.values(data).map(bank => ({
           code: bank.code,
-          name: bank.name,
+          name: BANK_NAME_OVERRIDES[bank.code] || bank.name,
           kana: bank.kana
         }));
       } catch (error) {
