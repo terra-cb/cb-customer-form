@@ -2006,8 +2006,10 @@
     }
 
     // メールアドレスバリデーション
+    // 先頭が = + - のアドレスはスプレッドシートで数式扱いされるため拒否する
+    // （CBlist の gas/src/CustomerForm.html・サーバー側 isValidEmailFormat と同じ条件。同期して変更すること）
     function validateEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const re = /^(?![=+\-])[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     }
 
