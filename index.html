@@ -245,6 +245,10 @@
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
+    .search-input.error {
+      border-color: #f44336;
+    }
+
     .search-icon {
       position: absolute;
       right: 12px;
@@ -1244,6 +1248,28 @@
     let formData = {};
     let turnstileToken = '';
 
+    // 入力項目ごとの判定と、その項目のエラー文・入力欄。
+    // 確認ボタンの可否（validateForm）とエラー文の表示（renderFieldErrors）が同じ条件を使うよう、
+    // 判定をここ一箇所にまとめる（CBlist 側 gas/src/CustomerForm.html と同期して変更すること）
+    const FIELD_CHECKS = [
+      { id: 'email', input: 'email', error: 'emailError',
+        ok: function() { const v = document.getElementById('email').value; return !!v && validateEmail(v); } },
+      { id: 'bank', input: 'bankSearch', error: 'bankError',
+        ok: function() { return !!selectedBank; } },
+      { id: 'branch', input: 'branchSearch', error: 'branchError',
+        ok: function() { return !!selectedBranch; } },
+      { id: 'accountNumber', input: 'accountNumber', error: 'accountNumberError',
+        ok: function() { const v = document.getElementById('accountNumber').value; return !!v && v.length === 7; } },
+      { id: 'accountName', input: 'accountName', error: 'accountNameError',
+        ok: function() { const v = document.getElementById('accountName').value; return !!v && validateKana(v); } },
+      { id: 'relationship', input: 'relationship', error: 'relationshipError',
+        ok: function() { return !!document.getElementById('relationship').value; } },
+      { id: 'address', input: 'address', error: 'addressError',
+        ok: function() { return !!document.getElementById('address').value.trim(); } },
+    ];
+    // 入力欄に触れて離れた項目。開いた直後の空欄に最初から赤字を出さないため、エラー文はこの項目だけに出す
+    const touchedFields = new Set();
+
     // Turnstile メッセージ表示
     function setTurnstileMessage(text, type) {
       const el = document.getElementById('turnstileMessage');
@@ -1436,6 +1462,7 @@
 
         // イベントリスナー設定
         setupEventListeners();
+        setupFieldErrorDisplay();
 
         // バリデーション
         validateForm();
@@ -1946,37 +1973,9 @@
 
     // 入力フォームバリデーション
     function validateForm() {
-      const email = document.getElementById('email').value;
-      const address = document.getElementById('address').value.trim();
-      const accountNumber = document.getElementById('accountNumber').value;
-      const accountName = document.getElementById('accountName').value;
       const relationship = document.getElementById('relationship').value;
 
-      let isValid = true;
-
-      if (!email || !validateEmail(email)) {
-        isValid = false;
-      }
-
-      if (!address) {
-        isValid = false;
-      }
-
-      if (!selectedBank || !selectedBranch) {
-        isValid = false;
-      }
-
-      if (!accountNumber || accountNumber.length !== 7) {
-        isValid = false;
-      }
-
-      if (!accountName || !validateKana(accountName)) {
-        isValid = false;
-      }
-
-      if (!relationship) {
-        isValid = false;
-      }
+      let isValid = FIELD_CHECKS.every(function(c) { return c.ok(); });
 
       // CB4: 続柄が本人以外の場合は名義相違確認が必須
       if (relationship && relationship !== '本人') {
@@ -1986,7 +1985,38 @@
       }
 
       document.getElementById('confirmButton').disabled = !isValid;
+      renderFieldErrors();
       return isValid;
+    }
+
+    // 触れた項目で、いま不正なものにだけエラー文と赤枠を出す。直ったらすぐ消す
+    function renderFieldErrors() {
+      FIELD_CHECKS.forEach(function(c) {
+        const show = touchedFields.has(c.id) && !c.ok();
+        document.getElementById(c.error).classList.toggle('show', show);
+        const input = document.getElementById(c.input);
+        input.classList.toggle('error', show);
+        input.setAttribute('aria-invalid', show ? 'true' : 'false');
+      });
+    }
+
+    // 入力欄を離れたら「触れた」とし、エラー文を出せるようにする。支援技術にも伝える
+    function setupFieldErrorDisplay() {
+      FIELD_CHECKS.forEach(function(c) {
+        const input = document.getElementById(c.input);
+        input.setAttribute('aria-describedby', c.error);
+        document.getElementById(c.error).setAttribute('aria-live', 'polite');
+        // 銀行・支店は候補をクリックして選ぶ。クリックより先に blur が来るため、
+        // 少し待ってから判定する（待たないと、選ぶ直前に一瞬エラーが出る）。
+        // それ以外も setTimeout(0) で、各欄の blur 処理（口座番号のゼロ埋め等）の後に判定する
+        const delay = (c.id === 'bank' || c.id === 'branch') ? 250 : 0;
+        input.addEventListener('blur', function() {
+          setTimeout(function() {
+            touchedFields.add(c.id);
+            validateForm();
+          }, delay);
+        });
+      });
     }
 
     // メールアドレスバリデーション
